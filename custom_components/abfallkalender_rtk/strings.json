@@ -63,19 +63,19 @@
   "issues": {
     "network": {
       "title": "Abfallkalender download failing",
-      "description": "The waste-collection PDF for '{name}' could not be downloaded repeatedly. Last error: {error}"
+      "description": "The waste-collection PDF for {name} could not be downloaded repeatedly. Last error: {error}"
     },
     "not_found": {
       "title": "Abfallkalender PDF not found",
-      "description": "The configured PDF for '{name}' was not found (HTTP 404). The yearly URL may have changed. Open the integration options and update the PDF URL. Details: {error}"
+      "description": "The configured PDF for {name} was not found (HTTP 404). The yearly URL may have changed. Open the integration options and update the PDF URL. Details: {error}"
     },
     "parse_error": {
       "title": "Abfallkalender could not be read",
-      "description": "The PDF for '{name}' could not be parsed; the layout may have changed and the integration needs an update. Details: {error}"
+      "description": "The PDF for {name} could not be parsed; the layout may have changed and the integration needs an update. Details: {error}"
     },
     "rollover_overdue": {
       "title": "Next year's Abfallkalender not available",
-      "description": "The calendar for '{name}' is running out of dates and next year's PDF is not published yet. Check for a new PDF and update the URL in the integration options if needed. Details: {error}"
+      "description": "The calendar for {name} is running out of dates and next year's PDF is not published yet. Check for a new PDF and update the URL in the integration options if needed. Details: {error}"
     }
   }
 }

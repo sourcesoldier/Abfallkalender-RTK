@@ -63,19 +63,19 @@
   "issues": {
     "network": {
       "title": "Abfallkalender-Download fehlgeschlagen",
-      "description": "Das Abfallkalender-PDF für '{name}' konnte wiederholt nicht heruntergeladen werden. Letzter Fehler: {error}"
+      "description": "Das Abfallkalender-PDF für {name} konnte wiederholt nicht heruntergeladen werden. Letzter Fehler: {error}"
     },
     "not_found": {
       "title": "Abfallkalender-PDF nicht gefunden",
-      "description": "Das konfigurierte PDF für '{name}' wurde nicht gefunden (HTTP 404). Möglicherweise hat sich die jährliche URL geändert. Öffnen Sie die Integrationsoptionen und aktualisieren Sie die PDF-URL. Details: {error}"
+      "description": "Das konfigurierte PDF für {name} wurde nicht gefunden (HTTP 404). Möglicherweise hat sich die jährliche URL geändert. Öffnen Sie die Integrationsoptionen und aktualisieren Sie die PDF-URL. Details: {error}"
     },
     "parse_error": {
       "title": "Abfallkalender konnte nicht gelesen werden",
-      "description": "Das PDF für '{name}' konnte nicht verarbeitet werden; möglicherweise hat sich das Layout geändert und die Integration muss aktualisiert werden. Details: {error}"
+      "description": "Das PDF für {name} konnte nicht verarbeitet werden; möglicherweise hat sich das Layout geändert und die Integration muss aktualisiert werden. Details: {error}"
     },
     "rollover_overdue": {
       "title": "Abfallkalender des Folgejahres nicht verfügbar",
-      "description": "Für '{name}' gehen die Termine zur Neige und das PDF des Folgejahres ist noch nicht veröffentlicht. Prüfen Sie auf ein neues PDF und aktualisieren Sie bei Bedarf die URL in den Integrationsoptionen. Details: {error}"
+      "description": "Für {name} gehen die Termine zur Neige und das PDF des Folgejahres ist noch nicht veröffentlicht. Prüfen Sie auf ein neues PDF und aktualisieren Sie bei Bedarf die URL in den Integrationsoptionen. Details: {error}"
     }
   }
 }
