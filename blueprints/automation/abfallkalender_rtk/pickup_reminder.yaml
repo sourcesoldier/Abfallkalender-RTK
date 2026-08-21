@@ -1,0 +1,57 @@
+blueprint:
+  name: Abfallkalender RTK - Abfuhr-Erinnerung
+  description: >
+    Erinnert vor der nächsten Abfuhr. Nutzt einen "Nächste Abfuhr"-Sensor der
+    Abfallkalender-RTK-Integration und sendet zur gewählten Uhrzeit eine
+    Benachrichtigung, wenn die Abfuhr am nächsten Tag ansteht.
+  domain: automation
+  input:
+    pickup_sensor:
+      name: Abfuhr-Sensor
+      description: Der "Nächste Abfuhr"-Sensor (oder ein einzelner Tonnen-Sensor).
+      selector:
+        entity:
+          filter:
+            - integration: abfallkalender_rtk
+              domain: sensor
+    notify_target:
+      name: Benachrichtigungsdienst
+      description: Der zu verwendende notify-Dienst (z. B. notify.mobile_app_...).
+      selector:
+        text:
+    reminder_time:
+      name: Uhrzeit der Erinnerung
+      description: Zeitpunkt am Vortag der Abfuhr.
+      default: "20:00:00"
+      selector:
+        time:
+    message:
+      name: Nachricht
+      description: >
+        Text der Benachrichtigung. {labels} wird durch die Tonnen ersetzt.
+      default: "Morgen wird abgeholt: {labels}"
+      selector:
+        text:
+
+variables:
+  pickup_sensor: !input pickup_sensor
+  message_template: !input message
+
+trigger:
+  - platform: time
+    at: !input reminder_time
+
+condition:
+  - condition: template
+    value_template: "{{ state_attr(pickup_sensor, 'is_tomorrow') | default(false) }}"
+
+action:
+  - variables:
+      labels: >
+        {{ state_attr(pickup_sensor, 'labels') | join(', ')
+           if state_attr(pickup_sensor, 'labels') else '' }}
+  - service: "{{ notify_target }}"
+    data:
+      message: "{{ message_template.replace('{labels}', labels) }}"
+
+mode: single

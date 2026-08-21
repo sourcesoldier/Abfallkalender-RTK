@@ -1,0 +1,4 @@
+# Test dependencies for the Home Assistant integration test suite.
+# Pinned to the versions used during development for reproducible CI.
+pytest-homeassistant-custom-component==0.13.316
+pdfplumber==0.11.10

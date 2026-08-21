@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Abfallkalender RTK",
+        "description": "Geben Sie die URL des jährlichen Abfallkalender-PDFs für Ihren Bereich ein.",
+        "data": {
+          "name": "Name",
+          "pdf_url": "PDF-URL",
+          "scan_interval_days": "Aktualisierungsintervall",
+          "tracked_types": "Berücksichtigte Tonnen"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "In der URL wurde kein Kalenderjahr (20xx) gefunden.",
+      "parse_error": "Das PDF konnte nicht gelesen werden. Möglicherweise hat sich das Layout geändert.",
+      "cannot_connect": "Das PDF konnte nicht heruntergeladen werden."
+    },
+    "abort": {
+      "already_configured": "Dieser Kalender ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Abfallkalender RTK Optionen",
+        "data": {
+          "pdf_url": "PDF-URL",
+          "scan_interval_days": "Aktualisierungsintervall",
+          "tracked_types": "Berücksichtigte Tonnen",
+          "lookahead_days": "Vorlaufzeit für Abdeckung (Tage)",
+          "discovery_start": "Frühester Abruf des Folgejahres (MM-TT)",
+          "enable_persistent_notification": "Bei Fehler eine Benachrichtigung anzeigen"
+        }
+      }
+    }
+  },
+  "selector": {
+    "scan_interval_days": {
+      "options": {
+        "1": "Täglich",
+        "7": "Wöchentlich"
+      }
+    }
+  },
+  "entity": {
+    "calendar": {
+      "collection": { "name": "Abfuhr" }
+    },
+    "sensor": {
+      "next_pickup": { "name": "Nächste Abfuhr" },
+      "next_bm": { "name": "Nächster Biomüll" },
+      "next_gt": { "name": "Nächste Gelbe Tonne" },
+      "next_pm": { "name": "Nächster Papiermüll" },
+      "next_rm": { "name": "Nächster Restmüll" },
+      "next_sm": { "name": "Nächster Sondermüll" }
+    },
+    "binary_sensor": {
+      "problem": { "name": "Problem" }
+    }
+  },
+  "issues": {
+    "network": {
+      "title": "Abfallkalender-Download fehlgeschlagen",
+      "description": "Das Abfallkalender-PDF für '{name}' konnte wiederholt nicht heruntergeladen werden. Letzter Fehler: {error}"
+    },
+    "not_found": {
+      "title": "Abfallkalender-PDF nicht gefunden",
+      "description": "Das konfigurierte PDF für '{name}' wurde nicht gefunden (HTTP 404). Möglicherweise hat sich die jährliche URL geändert. Öffnen Sie die Integrationsoptionen und aktualisieren Sie die PDF-URL. Details: {error}"
+    },
+    "parse_error": {
+      "title": "Abfallkalender konnte nicht gelesen werden",
+      "description": "Das PDF für '{name}' konnte nicht verarbeitet werden; möglicherweise hat sich das Layout geändert und die Integration muss aktualisiert werden. Details: {error}"
+    },
+    "rollover_overdue": {
+      "title": "Abfallkalender des Folgejahres nicht verfügbar",
+      "description": "Für '{name}' gehen die Termine zur Neige und das PDF des Folgejahres ist noch nicht veröffentlicht. Prüfen Sie auf ein neues PDF und aktualisieren Sie bei Bedarf die URL in den Integrationsoptionen. Details: {error}"
+    }
+  }
+}

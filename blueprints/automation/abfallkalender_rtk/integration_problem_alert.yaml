@@ -1,0 +1,44 @@
+blueprint:
+  name: Abfallkalender RTK - Fehlerbenachrichtigung
+  description: >
+    Sendet eine Benachrichtigung, wenn die Abfallkalender-RTK-Integration ein
+    Problem meldet (z. B. Download fehlgeschlagen, geändertes PDF-Layout oder
+    fehlender Kalender fürs Folgejahr).
+  domain: automation
+  input:
+    problem_sensor:
+      name: Problem-Sensor
+      description: Der "Problem"-Binärsensor der Integration.
+      selector:
+        entity:
+          filter:
+            - integration: abfallkalender_rtk
+              domain: binary_sensor
+    notify_target:
+      name: Benachrichtigungsdienst
+      description: Der zu verwendende notify-Dienst (z. B. notify.mobile_app_...).
+      selector:
+        text:
+
+variables:
+  problem_sensor: !input problem_sensor
+
+trigger:
+  - platform: state
+    entity_id: !input problem_sensor
+    to: "on"
+    for:
+      minutes: 5
+
+action:
+  - variables:
+      reason: "{{ state_attr(problem_sensor, 'reason') }}"
+      detail: "{{ state_attr(problem_sensor, 'last_error') }}"
+  - service: "{{ notify_target }}"
+    data:
+      title: "Abfallkalender RTK: Problem ({{ reason }})"
+      message: >
+        Die Abfallkalender-Integration meldet ein Problem: {{ reason }}.
+        {{ detail }} Bitte prüfen Sie die Integrationsoptionen.
+
+mode: single
