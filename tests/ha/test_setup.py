@@ -129,7 +129,13 @@ async def test_next_pickup_refreshes_at_midnight(
     aioclient_mock.get(TEMPLATE.format(year=2026), content=FIXTURE.read_bytes())
     aioclient_mock.get(TEMPLATE.format(year=2027), status=404)
 
-    entry = _mock_entry()
+    # Weekly interval, so the coordinator does not refresh during the test.
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Abfallkalender RTK",
+        data={CONF_URL_TEMPLATE: TEMPLATE, CONF_ACTIVE_YEAR: 2026},
+        options={CONF_SCAN_INTERVAL_DAYS: 7, CONF_TRACKED_TYPES: ALL_TYPES},
+    )
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
@@ -139,21 +145,26 @@ async def test_next_pickup_refreshes_at_midnight(
         "sensor", DOMAIN, f"{entry.entry_id}_next_pickup"
     )
     before = hass.states.get(next_id)
-    assert before.state < "2026-12-30"
+    pickup = date.fromisoformat(before.state)
+    # Must stay inside the 7-day coordinator window for this test to be meaningful.
+    assert pickup < date(2026, 6, 21)
     calls_before = len(aioclient_mock.mock_calls)
 
-    # Jump to just after local midnight, long after the earlier pickup dates.
-    later = dt_util.start_of_local_day(date(2026, 12, 30)) + timedelta(seconds=5)
+    # Jump to just after local midnight on the day after the pickup.
+    later = dt_util.start_of_local_day(pickup + timedelta(days=1)) + timedelta(
+        seconds=5
+    )
     freezer.move_to(later)
     async_fire_time_changed(hass, later)
     await hass.async_block_till_done()
 
-    after = hass.states.get(next_id)
-    # No new download happened (the daily coordinator interval has not fired)...
+    # No new download happened (the coordinator interval has not elapsed)...
     assert len(aioclient_mock.mock_calls) == calls_before
-    # ...yet the state no longer points to a past date.
-    assert after.state != before.state
-    assert after.state in ("unknown", "unavailable") or after.state >= "2026-12-30"
+    # ...yet the sensor moved on to a future pickup.
+    after = hass.states.get(next_id)
+    assert after.state in ("unknown", "unavailable") or after.state > before.state
+    if after.state not in ("unknown", "unavailable"):
+        assert after.attributes["days_to"] >= 0
 
 
 @pytest.mark.freeze_time("2026-06-15")
