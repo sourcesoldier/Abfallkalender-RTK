@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from homeassistant.components.calendar import CalendarEntity, CalendarEvent
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util import dt as dt_util
 
 from . import AbfallkalenderConfigEntry
 from .const import WASTE_TYPES
@@ -60,7 +61,7 @@ class AbfallkalenderCalendar(AbfallkalenderEntity, CalendarEntity):
     @property
     def event(self) -> CalendarEvent | None:
         """Next upcoming collection event."""
-        today = datetime.now().date()
+        today = dt_util.now().date()
         for day, codes in self._day_events():
             if day >= today:
                 return self._to_event(day, codes)

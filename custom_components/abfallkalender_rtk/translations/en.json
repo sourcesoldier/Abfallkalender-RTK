@@ -34,6 +34,9 @@
           "enable_persistent_notification": "Show a notification banner on failure"
         }
       }
+    },
+    "error": {
+      "invalid_discovery_start": "Enter a valid date as MM-DD, for example 10-01."
     }
   },
   "selector": {

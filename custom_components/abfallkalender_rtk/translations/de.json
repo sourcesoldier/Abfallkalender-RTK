@@ -34,6 +34,9 @@
           "enable_persistent_notification": "Bei Fehler eine Benachrichtigung anzeigen"
         }
       }
+    },
+    "error": {
+      "invalid_discovery_start": "Bitte ein gültiges Datum als MM-TT angeben, z. B. 10-01."
     }
   },
   "selector": {

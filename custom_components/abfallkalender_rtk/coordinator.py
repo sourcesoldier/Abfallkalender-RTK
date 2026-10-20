@@ -35,6 +35,7 @@ from .const import (
     REASON_ROLLOVER_OVERDUE,
     USER_AGENT,
     WASTE_TYPES,
+    parse_month_day,
 )
 from .parser import ParseError, parse_pdf
 from .url import build_url
@@ -214,7 +215,17 @@ class AbfallkalenderCoordinator(DataUpdateCoordinator[CalendarData]):
 
     def _discovery_start_date(self) -> date:
         raw = self.entry.options.get(CONF_DISCOVERY_START, DEFAULT_DISCOVERY_START)
-        month, day = (int(p) for p in raw.split("-"))
+        parsed = parse_month_day(raw)
+        if parsed is None:
+            _LOGGER.warning(
+                "Invalid %s option %r, falling back to %s",
+                CONF_DISCOVERY_START,
+                raw,
+                DEFAULT_DISCOVERY_START,
+            )
+            parsed = parse_month_day(DEFAULT_DISCOVERY_START)
+            assert parsed is not None
+        month, day = parsed
         return date(datetime.now().year, month, day)
 
     async def _async_download(self, url: str) -> bytes:
