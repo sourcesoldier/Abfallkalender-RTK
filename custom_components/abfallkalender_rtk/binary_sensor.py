@@ -11,6 +11,7 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util import dt as dt_util
 
 from . import AbfallkalenderConfigEntry
 from .coordinator import AbfallkalenderCoordinator
@@ -45,7 +46,7 @@ class AbfallkalenderProblemSensor(AbfallkalenderEntity, BinarySensorEntity):
     def extra_state_attributes(self) -> dict[str, object]:
         data = self.coordinator.data
         coverage = data.coverage_until()
-        today = datetime.now().date()
+        today = dt_util.now().date()
         stale_days = None
         if data.last_success is not None:
             stale_days = (datetime.now() - data.last_success).days

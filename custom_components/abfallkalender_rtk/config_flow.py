@@ -44,6 +44,7 @@ from .const import (
     HTTP_TIMEOUT_SECONDS,
     USER_AGENT,
     WASTE_TYPES,
+    parse_month_day,
 )
 from .parser import ParseError, parse_pdf
 from .url import UrlError, build_url, normalize_url
@@ -166,38 +167,41 @@ class AbfallkalenderOptionsFlow(OptionsFlow):
         )
 
         if user_input is not None:
-            new_url = user_input[CONF_PDF_URL]
-            try:
-                template, year = await _validate_pdf(self.hass, new_url)
-            except UrlError:
-                errors["base"] = "invalid_url"
-            except ParseError:
-                errors["base"] = "parse_error"
-            except (aiohttp.ClientError, TimeoutError):
-                errors["base"] = "cannot_connect"
+            if parse_month_day(user_input[CONF_DISCOVERY_START]) is None:
+                errors[CONF_DISCOVERY_START] = "invalid_discovery_start"
             else:
-                # Persist a possibly changed URL/year on the entry data.
-                self.hass.config_entries.async_update_entry(
-                    self.config_entry,
-                    data={
-                        **self.config_entry.data,
-                        CONF_URL_TEMPLATE: template,
-                        CONF_ACTIVE_YEAR: year,
-                    },
-                )
-                return self.async_create_entry(
-                    data={
-                        CONF_SCAN_INTERVAL_DAYS: int(
-                            user_input[CONF_SCAN_INTERVAL_DAYS]
-                        ),
-                        CONF_TRACKED_TYPES: user_input[CONF_TRACKED_TYPES],
-                        CONF_LOOKAHEAD_DAYS: user_input[CONF_LOOKAHEAD_DAYS],
-                        CONF_DISCOVERY_START: user_input[CONF_DISCOVERY_START],
-                        CONF_ENABLE_PERSISTENT_NOTIFICATION: user_input[
-                            CONF_ENABLE_PERSISTENT_NOTIFICATION
-                        ],
-                    }
-                )
+                new_url = user_input[CONF_PDF_URL]
+                try:
+                    template, year = await _validate_pdf(self.hass, new_url)
+                except UrlError:
+                    errors["base"] = "invalid_url"
+                except ParseError:
+                    errors["base"] = "parse_error"
+                except (aiohttp.ClientError, TimeoutError):
+                    errors["base"] = "cannot_connect"
+                else:
+                    # Persist a possibly changed URL/year on the entry data.
+                    self.hass.config_entries.async_update_entry(
+                        self.config_entry,
+                        data={
+                            **self.config_entry.data,
+                            CONF_URL_TEMPLATE: template,
+                            CONF_ACTIVE_YEAR: year,
+                        },
+                    )
+                    return self.async_create_entry(
+                        data={
+                            CONF_SCAN_INTERVAL_DAYS: int(
+                                user_input[CONF_SCAN_INTERVAL_DAYS]
+                            ),
+                            CONF_TRACKED_TYPES: user_input[CONF_TRACKED_TYPES],
+                            CONF_LOOKAHEAD_DAYS: user_input[CONF_LOOKAHEAD_DAYS],
+                            CONF_DISCOVERY_START: user_input[CONF_DISCOVERY_START],
+                            CONF_ENABLE_PERSISTENT_NOTIFICATION: user_input[
+                                CONF_ENABLE_PERSISTENT_NOTIFICATION
+                            ],
+                        }
+                    )
 
         schema = vol.Schema(
             {

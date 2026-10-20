@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util import dt as dt_util
 
 from . import AbfallkalenderConfigEntry
 from .const import WASTE_TYPES
@@ -34,7 +35,7 @@ def _day_attrs(day: date | None) -> dict[str, object]:
     """Common date-derived attributes shared by all sensors."""
     if day is None:
         return {"days_to": None, "weekday": None, "is_today": False, "is_tomorrow": False}
-    today = datetime.now().date()
+    today = dt_util.now().date()
     delta = (day - today).days
     return {
         "days_to": delta,
@@ -57,7 +58,7 @@ class BinNextPickupSensor(AbfallkalenderEntity, SensorEntity):
         self._attr_unique_id = f"{coordinator.entry.entry_id}_next_{code.lower()}"
 
     def _next_day(self) -> date | None:
-        today = datetime.now().date()
+        today = dt_util.now().date()
         days = sorted(
             day
             for day, codes in self.coordinator.data.events.items()
@@ -86,7 +87,7 @@ class CombinedNextPickupSensor(AbfallkalenderEntity, SensorEntity):
         self._attr_unique_id = f"{coordinator.entry.entry_id}_next_pickup"
 
     def _next(self) -> tuple[date, set[str]] | None:
-        today = datetime.now().date()
+        today = dt_util.now().date()
         tracked = set(self.coordinator.tracked_types)
         upcoming = sorted(
             (day, codes & tracked)

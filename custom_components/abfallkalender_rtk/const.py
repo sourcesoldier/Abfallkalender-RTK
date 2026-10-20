@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+from datetime import date
 from typing import Final
 
 DOMAIN: Final = "abfallkalender_rtk"
@@ -56,3 +58,21 @@ REASON_NETWORK: Final = "network"
 REASON_NOT_FOUND: Final = "not_found"
 REASON_PARSE_ERROR: Final = "parse_error"
 REASON_ROLLOVER_OVERDUE: Final = "rollover_overdue"
+
+
+_MONTH_DAY_RE: Final = re.compile(r"^(\d{2})-(\d{2})$")
+
+
+def parse_month_day(raw: object) -> tuple[int, int] | None:
+    """Parse an "MM-DD" string into (month, day), or None if invalid.
+
+    Validated against a non-leap year so the result is valid in every year.
+    """
+    if not isinstance(raw, str) or not (match := _MONTH_DAY_RE.match(raw.strip())):
+        return None
+    month, day = int(match[1]), int(match[2])
+    try:
+        date(2001, month, day)
+    except ValueError:
+        return None
+    return month, day
